@@ -27,6 +27,7 @@ Adafruit_AlphaNum4 display1 = Adafruit_AlphaNum4();
 #define MODELIDAR 4
 #define MODEIRDDS 5
 
+/*
 char * modestrings[] = {
   "PRESS BUTTON EXACTLY ONCE",
   "READ ANALOG INPUT ONE",
@@ -35,14 +36,24 @@ char * modestrings[] = {
   "READ LIDAR",
   "READ IR ON/OFF PROXIMITY"   
 };
-
+*/
+/*
 bool switchingmodes = true;
 unsigned long modesettime = 0;
+*/
 
-uint8_t operatingmode = MODEIRDDS;
+int lastdistancemm;
+long lastread;
+long readspacing = 50;
+
+uint8_t operatingmode = MODELIDAR;
 
 bool led1on = false;
 bool led2on = false;
+
+char spibuf [100];
+volatile byte pos;
+volatile boolean newdata;
 
 unsigned long curtime = 0;
 unsigned long lastleddisplaytime = 0;

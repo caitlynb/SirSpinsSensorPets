@@ -27,11 +27,23 @@ void setup() {
   pinMode(ULTRASONICTRIGPIN, OUTPUT);
   pinMode(ULTRASONICECHOPIN, INPUT);
 
-  curbutton1pressed = digitalRead(USERBUTTON1SWITCHPIN);
-  curbutton2pressed = digitalRead(USERBUTTON2SWITCHPIN);
+  //curbutton1pressed = digitalRead(USERBUTTON1SWITCHPIN);
+  //curbutton2pressed = digitalRead(USERBUTTON2SWITCHPIN);
+
+  /*
+   * Set up for SPI Slave
+   * https://forum.arduino.cc/index.php?topic=52111.0
+   */
+  pinMode(MISO, OUTPUT);
+  SPCR |= _BV(SPE);
+  SPCR |= _BV(SPIE);
+  pos = 0;
+  newdata = false;
+
 
   lidar.init();
   lidar.setTimeout(500);
+  lastread = millis();
 }
 
 void loop() {  
@@ -40,7 +52,7 @@ void loop() {
 //  display1.writeDisplay();
 
   curtime = millis();
-
+/*
   curbutton2pressed = digitalRead(USERBUTTON2SWITCHPIN);
   if(curbutton2pressed == HIGH){
     if(lastbutton2pressed == LOW){
@@ -70,7 +82,8 @@ void loop() {
   } else {
     lastbutton2pressed = LOW;
   }
-
+  */
+/*
   if(switchingmodes){
     operatingmode += 1;
     if(operatingmode == NUMMODES) operatingmode = 0;
@@ -86,28 +99,44 @@ void loop() {
         
     }
   }
+  */
   
+  if(curtime > lastread + readspacing){
+    switch(operatingmode){
+      case MODEButtonCnt:
+        ButtonCount();
+        break;
+      case MODEAnalog1:
+        readAnalog1();
+        break;
+      case MODEIRDDS:
+        displayString(display1, "Prox", true);
+        IRProx();
+        break;
+      case MODEUltrasonic:
+        Ultrasonic();
+        break;
+      case MODEUltrasonicAVG:
+        UltrasonicWAvg();
+        break;
+      case MODELIDAR:
+        readLidar();
+        break;
+    }
+    lastread = curtime;
 
-  switch(operatingmode){
-    case MODEButtonCnt:
-      ButtonCount();
-      break;
-    case MODEAnalog1:
-      readAnalog1();
-      break;
-    case MODEIRDDS:
-      displayString(display1, "Prox", true);
-      IRProx();
-      break;
-    case MODEUltrasonic:
-      Ultrasonic();
-      break;
-    case MODEUltrasonicAVG:
-      UltrasonicWAvg();
-      break;
-    case MODELIDAR:
-      readLidar();
-      break;
+    // prep it for transfer over SPI
+    spibuf[0] = 0xFF;
+    spibuf[1] = (byte) lastread;
+    spibuf[2] = (byte) (lastread >> 8);
+    spibuf[3] = (byte) (lastread >> 16);
+    spibuf[4] = (byte) (lastread >> 24);
+    SPDR = spibuf[0];
+  }
+
+  if(digitalRead(SS) == HIGH){
+    // not it, so reset pos.  (Yes, we will do this a LOT)
+    pos = 0;
   }
 }
 
@@ -302,8 +331,20 @@ void readAnalog1(){
 }
 
 void readLidar(){
-  digitalWrite(USERBUTTON1LEDPIN, HIGH);
-  displayFloat(display1, lidar.readRangeSingleMillimeters()/10.0);
-  digitalWrite(USERBUTTON1LEDPIN, LOW);
-  delay(100);
+  //digitalWrite(USERBUTTON1LEDPIN, HIGH);
+  //displayFloat(display1, lidar.readRangeSingleMillimeters()/10.0);
+  //digitalWrite(USERBUTTON1LEDPIN, LOW);
+  //delay(100);
+  lastdistancemm = lidar.readRangeSingleMillimeters();
+}
+
+/* 
+ * Silly arduino and their limited spi library
+ * See http://www.gammon.com.au/forum/?id=10892
+ */
+ISR(SPI_STC_vect){
+  if(pos < 5){
+    SPDR = spibuf[pos];
+    pos++;
+  }
 }
