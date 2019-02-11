@@ -126,11 +126,15 @@ void loop() {
     lastread = curtime;
 
     // prep it for transfer over SPI
-    spibuf[0] = 0xFF;
-    spibuf[1] = (byte) lastread;
-    spibuf[2] = (byte) (lastread >> 8);
-    spibuf[3] = (byte) (lastread >> 16);
-    spibuf[4] = (byte) (lastread >> 24);
+    spibuf[0] = 0x11;
+    spibuf[1] = 0x33;
+    spibuf[2] = 0x55;
+    spibuf[3] = 0x77;
+    spibuf[4] = 0x99;
+    spibuf[6] = (byte) lastread;
+    spibuf[7] = (byte) (lastread >> 8);
+    spibuf[8] = (byte) (lastread >> 16);
+    spibuf[9] = (byte) (lastread >> 24);
     SPDR = spibuf[0];
   }
 
@@ -343,7 +347,7 @@ void readLidar(){
  * See http://www.gammon.com.au/forum/?id=10892
  */
 ISR(SPI_STC_vect){
-  if(pos < 5){
+  if(pos < 10){
     SPDR = spibuf[pos];
     pos++;
   }

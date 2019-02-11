@@ -1,0 +1,47 @@
+Partlist
+
+Exported from NoteBox.sch at 9/20/2018 7:30 PM
+
+EAGLE Version 7.7.0 Copyright (c) 1988-2016 CadSoft
+
+Assembly variant: 
+
+Part     Value              Device             Package                     Library        Sheet
+
+5VIN     C-GRID-02-70543    C-GRID-02-70543    70543-02                    con-molex      1
+12VIN    C-GRID-02-70553    C-GRID-02-70553    70553-02                    con-molex      1
+ANALOG1  C-GRID-03-70543    C-GRID-03-70543    70543-03                    con-molex      1
+ANALOG2  C-GRID-03-70543    C-GRID-03-70543    70543-03                    con-molex      1
+BUTTON1  C-GRID-04-70543    C-GRID-04-70543    70543-04                    con-molex      1
+BUTTON2  C-GRID-04-70543    C-GRID-04-70543    70543-04                    con-molex      1
+C1       10uF               C-USC1206K         C1206K                      rcl            1
+C2       2.2uF              C-USC0805K         C0805K                      rcl            1
+C3       10uF               C-USC1206K         C1206K                      rcl            1
+C4       2.2uF              C-USC0805K         C0805K                      rcl            1
+DDS      POLOLUDDS          POLOLUDDS          POLOLUDDS                   LUR_Components 1
+FET1     SSM6N7002KFU       SSM6N7002KFU       US6                         LUR_Components 1
+FET2     SSM6N7002KFU       SSM6N7002KFU       US6                         LUR_Components 1
+HCSR04   HCSR04             HCSR04             HCSR04                      LUR_Components 1
+I2C      C-GRID-04-70543    C-GRID-04-70543    70543-04                    con-molex      1
+L1       68uH               INDUCTOR           6060                        LUR_Components 1
+LED1     I2CLEDSEGMENT15SEG I2CLEDSEGMENT15SEG ADAFRUITI2CLEDSEGMENT       UltrasonicHarp 1
+PWR      POWERPOLERA1X2     POWERPOLERA1X2     PP-RA-1X2                   Anderson       1
+REG1     RECOMREG           RECOMREG           RECOMREG                    LUR_Components 1
+RN1      10K                4R-NCAY16          CAY16                       resistor-dil   1
+RN2      2K                 4R-NCAY16          CAY16                       resistor-dil   1
+RN3      10K                4R-NCAY16          CAY16                       resistor-dil   1
+RN4      100                4R-NCAY16          CAY16                       resistor-dil   1
+RN5      10K                4R-NCAY16          CAY16                       resistor-dil   1
+SERIAL   C-GRID-04-70543    C-GRID-04-70543    70543-04                    con-molex      1
+SJ1                         SJ                 SJ                          jumper         1
+SJ2                         SJ2W               SJ_2                        jumper         1
+SJ3                         SJ2W               SJ_2                        jumper         1
+SJ4                         SJ                 SJ                          jumper         1
+SJ5                         SJ                 SJ                          jumper         1
+SPI      C-GRID-06-70553    C-GRID-06-70553    70553-06                    con-molex      1
+TOF      POLOLUTOF          POLOLUTOF          POLOLUTOF                   LUR_Components 1
+U$5      MOUNT6-32          MOUNT6-32          6-32                        Mounts         1
+U$6      MOUNT6-32          MOUNT6-32          6-32                        Mounts         1
+U$7      MOUNT6-32          MOUNT6-32          6-32                        Mounts         1
+U$8      MOUNT6-32          MOUNT6-32          6-32                        Mounts         1
+U1       PROMINIMICROCENTER PROMINIMICROCENTER MICROCENTER-ARDUINO-PROMINI UltrasonicHarp 1
