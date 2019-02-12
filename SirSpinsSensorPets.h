@@ -17,15 +17,58 @@ Adafruit_AlphaNum4 display1 = Adafruit_AlphaNum4();
 #define ANALOG1PIN A0
 #define ANALOG2PIN A1
 #define IRDDSPIN 9
-#define LEDPIN 13
+//#define LEDPIN 13
 
-#define NUMMODES 6
-#define MODEButtonCnt 0
-#define MODEAnalog1 1
-#define MODEUltrasonic 2
-#define MODEUltrasonicAVG 3
-#define MODELIDAR 4
-#define MODEIRDDS 5
+#define RIOPIN0 10
+#define RIOPIN1 11
+#define RIOPIN2 12
+#define RIOPIN3 13
+
+//#define NUMMODES 6
+//#define MODEButtonCnt 0
+//#define MODEAnalog1 1
+//#define MODEUltrasonic 2
+//#define MODEUltrasonicAVG 3
+//#define MODELIDAR 4
+//#define MODEIRDDS 5
+
+int distancescm[] = {
+  -1, // 0000
+  2,  // 0001
+  4,  // 0010
+  6,  // 0011
+  8,  // 0100
+  10, // 0101
+  12, // 0110
+  14, // 0111
+  16, // 1000
+  18, // 1001
+  20, // 1010
+  22, // 1011
+  24, // 1100
+  26, // 1101
+  28, // 1110
+  30  // 1111
+};
+
+byte riopins[] = {
+  0b00000000, // -1
+  0b00000001, // 2
+  0b00000010, // 4
+  0b00000011, // 6
+  0b00000100, // 8
+  0b00000101, // 10
+  0b00000110, // 12
+  0b00000111, // 14
+  0b00001000, // 16
+  0b00001001, // 18
+  0b00001010, // 20
+  0b00001011, // 22
+  0b00001100, // 24
+  0b00001101, // 26
+  0b00001110, // 28
+  0b00001111  // 30
+};
 
 /*
 char * modestrings[] = {
@@ -43,10 +86,12 @@ unsigned long modesettime = 0;
 */
 
 int lastdistancemm;
+int lastdistancecm;
+
 long lastread;
 long readspacing = 50;
 
-uint8_t operatingmode = MODELIDAR;
+//uint8_t operatingmode = MODELIDAR;
 
 bool led1on = false;
 bool led2on = false;

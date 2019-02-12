@@ -21,25 +21,11 @@ void setup() {
   pinMode(USERBUTTON2LEDPIN, OUTPUT);
   digitalWrite(USERBUTTON2LEDPIN, led2on);
 
-  pinMode(LEDPIN, OUTPUT);
-  digitalWrite(LEDPIN, LOW);
+//  pinMode(LEDPIN, OUTPUT);
+//  digitalWrite(LEDPIN, LOW);
 
   pinMode(ULTRASONICTRIGPIN, OUTPUT);
   pinMode(ULTRASONICECHOPIN, INPUT);
-
-  //curbutton1pressed = digitalRead(USERBUTTON1SWITCHPIN);
-  //curbutton2pressed = digitalRead(USERBUTTON2SWITCHPIN);
-
-  /*
-   * Set up for SPI Slave
-   * https://forum.arduino.cc/index.php?topic=52111.0
-   */
-  pinMode(MISO, OUTPUT);
-  SPCR |= _BV(SPE);
-  SPCR |= _BV(SPIE);
-  pos = 0;
-  newdata = false;
-
 
   lidar.init();
   lidar.setTimeout(500);
@@ -47,101 +33,28 @@ void setup() {
 }
 
 void loop() {  
-
-//  display1.writeDigitAscii(0,'/');
-//  display1.writeDisplay();
-
+  int idx;
   curtime = millis();
-/*
-  curbutton2pressed = digitalRead(USERBUTTON2SWITCHPIN);
-  if(curbutton2pressed == HIGH){
-    if(lastbutton2pressed == LOW){
-      button2presstime = curtime;
-      #ifdef DEBUG2
-      Serial.print("assigning:  Cur=");
-      Serial.print(curtime);
-      Serial.print("; b2time =");
-      Serial.println(button2presstime);
-      #endif
-      lastbutton2pressed = HIGH;
-    } else {
-      // button 2 was already pressed
-      if(curtime - button2presstime > buttondebouncetime){
-        #ifdef DEBUG2
-        Serial.print("curtime = ");
-        Serial.print(curtime);
-        Serial.print("; button2time = ");
-        Serial.println(button2presstime);
-        #endif
-        // valid button press
-        switchingmodes = true;
-        led2on = true;
-        digitalWrite(USERBUTTON2LEDPIN, led2on);
-      }
-    }
-  } else {
-    lastbutton2pressed = LOW;
-  }
-  */
-/*
-  if(switchingmodes){
-    operatingmode += 1;
-    if(operatingmode == NUMMODES) operatingmode = 0;
-    modesettime = curtime;
-    switchingmodes = false;
-    displayString(display1, modestrings[operatingmode]);
-    led2on = false;
-    digitalWrite(USERBUTTON2LEDPIN, led2on);
-    // reset modes
-    switch(operatingmode){
-      case MODEButtonCnt:
-        presscnt = 0;
-        
-    }
-  }
-  */
-  
-  if(curtime > lastread + readspacing){
-    switch(operatingmode){
-      case MODEButtonCnt:
-        ButtonCount();
-        break;
-      case MODEAnalog1:
-        readAnalog1();
-        break;
-      case MODEIRDDS:
-        displayString(display1, "Prox", true);
-        IRProx();
-        break;
-      case MODEUltrasonic:
-        Ultrasonic();
-        break;
-      case MODEUltrasonicAVG:
-        UltrasonicWAvg();
-        break;
-      case MODELIDAR:
-        readLidar();
-        break;
-    }
-    lastread = curtime;
 
-    // prep it for transfer over SPI
-    spibuf[0] = 0x11;
-    spibuf[1] = 0x33;
-    spibuf[2] = 0x55;
-    spibuf[3] = 0x77;
-    spibuf[4] = 0x99;
-    spibuf[6] = (byte) lastread;
-    spibuf[7] = (byte) (lastread >> 8);
-    spibuf[8] = (byte) (lastread >> 16);
-    spibuf[9] = (byte) (lastread >> 24);
-    SPDR = spibuf[0];
+  lastdistancecm = lidar.readRangeSingleMillimeters()/10.0;
+  displayInt(display1, lastdistancecm); // put the number on the led display
+ 
+  int arrlen = sizeof(distancescm) / sizeof(distancescm[0]);
+  for(idx = 0; idx < arrlen; idx++){
+    if(lastdistancecm < distancescm[idx]){
+      break;
+      // Set your distances to be just greater than you need
+    }
   }
+  // note, the above may 'break' when the LIDAR reads its default no return value.  In which case the arduino will 
+  // return the max 1111 value.
 
-  if(digitalRead(SS) == HIGH){
-    // not it, so reset pos.  (Yes, we will do this a LOT)
-    pos = 0;
-  }
+  byte retval = riopins[idx];
+  digitalWrite(RIOPIN0, retval & 0x01);
+  digitalWrite(RIOPIN1, retval >> 1 & 0x01);
+  digitalWrite(RIOPIN2, retval >> 2 & 0x01);
+  digitalWrite(RIOPIN3, retval >> 3 & 0x01);
+
 }
 
 void displayNum(Adafruit_AlphaNum4 disp, int n, uint8_t base=10){
@@ -264,7 +177,7 @@ void ButtonCount(){
   if( millis()-lastleddisplaytime > ledupdatetime){
     digitalWrite(USERBUTTON1LEDPIN, led1on);
     digitalWrite(USERBUTTON2LEDPIN, led2on);
-    digitalWrite(LEDPIN, led1on);
+//    digitalWrite(LEDPIN, led1on);
 
     displayFloat(display1, presscnt, 0, 10);
 
